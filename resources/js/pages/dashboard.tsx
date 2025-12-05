@@ -11,6 +11,16 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, InfiniteScroll, usePage } from '@inertiajs/react';
+import { IconFolderCode } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
+import {
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty"
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,7 +65,6 @@ export default function Dashboard({ employees }: { employees: EmployeeProps }) {
         return `${employee.FirstName} ${employee?.SecondName} ${employee?.LastName}`;
     }
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -66,39 +75,67 @@ export default function Dashboard({ employees }: { employees: EmployeeProps }) {
                     </h1>
                 </div>
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl md:min-h-min">
-                    <InfiniteScroll data="employees">
-                        <Table>
-                            <TableCaption>A list of employees.</TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[50px]">
-                                        NO.
-                                    </TableHead>
-                                    <TableHead>Full Name</TableHead>
-                                {/*    Add column based on the employee type*/}
-                                    <TableHead>Gender</TableHead>
-                                    <TableHead>Job Title</TableHead>
-                                    <TableHead>Department</TableHead>
-                                    <TableHead>Line Manager</TableHead>
+                    {
+                        employees.data.length === 0 ? <EmptyList /> : (
+                            <InfiniteScroll data="employees">
+                                <Table>
+                                    <TableCaption>A list of employees.</TableCaption>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[50px]">
+                                                NO.
+                                            </TableHead>
+                                            <TableHead>Full Name</TableHead>
+                                            {/*    Add column based on the employee type*/}
+                                            <TableHead>Gender</TableHead>
+                                            <TableHead>Job Title</TableHead>
+                                            <TableHead>Department</TableHead>
+                                            <TableHead>Line Manager</TableHead>
 
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {employees.data.map((employee, index) => (
-                                    <TableRow key={`${employee.EmployeeID}.${index}`}>
-                                        <TableCell>{index+1}.</TableCell>
-                                        <TableCell>{getFullName(employee)}</TableCell>
-                                        <TableCell>{employee.Gender}</TableCell>
-                                        <TableCell>{employee.JobTitle}</TableCell>
-                                        <TableCell>{employee.Department}</TableCell>
-                                        <TableCell>{employee.LineManager}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </InfiniteScroll>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {employees.data.map((employee, index) => (
+                                            <TableRow key={`${employee.EmployeeID}.${index}`}>
+                                                <TableCell>{index+1}.</TableCell>
+                                                <TableCell>{getFullName(employee)}</TableCell>
+                                                <TableCell>{employee.Gender}</TableCell>
+                                                <TableCell>{employee.JobTitle}</TableCell>
+                                                <TableCell>{employee.Department}</TableCell>
+                                                <TableCell>{employee.LineManager}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </InfiniteScroll>
+                        )
+                    }
                 </div>
             </div>
         </AppLayout>
     );
 }
+
+export function EmptyList() {
+    return (
+        <Empty>
+            <EmptyHeader>
+                <EmptyMedia variant="icon">
+                    <IconFolderCode />
+                </EmptyMedia>
+                <EmptyTitle>No Employee Yet</EmptyTitle>
+                <EmptyDescription>
+                    You haven&apos;t created any employee yet. Get started by creating
+                    your first employee.
+                </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+                <div className="flex gap-2">
+                    <Button>Create Employee</Button>
+                    <Button variant="outline">Import Employees</Button>
+                </div>
+            </EmptyContent>
+        </Empty>
+    )
+}
+
